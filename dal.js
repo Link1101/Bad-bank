@@ -1,7 +1,8 @@
 const { MongoClient } = require('mongodb');
 
 // MongoDB connection URI
-const uri = "mongodb+srv://badbank1234:badbank1234@badbank.9ah3g.mongodb.net/?retryWrites=true&w=majority&appName=Badbank";
+// const uri = "mongodb://root:password@127.0.0.1:27017";
+const uri = "mongodb+srv://badbank1234:badbank1234@badbank.9ah3g.mongodb.net/?retryWrites=true&w=majority&appName=Badbank";;
 
 // Create a MongoClient
 const client = new MongoClient(uri, { useNewUrlParser: true, useUnifiedTopology: true });
@@ -31,7 +32,7 @@ async function create(name, email, password) {
     }
 
     const usersCollection = db.collection('users');
-    
+
     try {
         const result = await usersCollection.insertOne({ name, email, password, balance: 0 });
         return result.insertedId;
@@ -49,7 +50,7 @@ async function find(email) {
     }
 
     const usersCollection = db.collection('users');
-    
+
     try {
         const user = await usersCollection.findOne({ email });
         return user ? [user] : [];
@@ -67,11 +68,32 @@ async function update(email, amount) {
     }
 
     const usersCollection = db.collection('users');
-    
+
     try {
         const result = await usersCollection.findOneAndUpdate(
             { email },
             { $inc: { balance: amount } },
+            { returnDocument: "after" }
+        );
+        return result.value;
+    } catch (err) {
+        console.error("Error updating user balance:", err);
+        return null;
+    }
+}
+
+async function update2(email, name, amount) {
+    if (!db) {
+        console.error("Database connection not established");
+        return null;
+    }
+
+    const usersCollection = db.collection('users');
+
+    try {
+        const result = await usersCollection.findOneAndUpdate(
+            { email },
+            { $set: { name: name, balance: amount } },
             { returnDocument: "after" }
         );
         return result.value;
@@ -89,7 +111,7 @@ async function all() {
     }
 
     const usersCollection = db.collection('users');
-    
+
     try {
         const users = await usersCollection.find({}).toArray();
         return users;
@@ -100,4 +122,4 @@ async function all() {
 }
 
 // Export the functions to match the names in index.js
-module.exports = { create, find, update, all };
+module.exports = { create, find, update, update2, all };
