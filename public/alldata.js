@@ -3,14 +3,12 @@ function AllData(){
 
     React.useEffect(() => {
 
+        let req = new Request('/api/all')
         // fetch all accounts from API
-        fetch('/api/all')
-            .then(response => response.json())
-            .then(data => {
-                console.log(data);
-                setData(JSON.stringify(data));
-            });
-
+        fetch2(req, (data=>{
+            console.log(data);
+            setData(JSON.stringify(data));
+        }))
     }, []);
 
     return (<>

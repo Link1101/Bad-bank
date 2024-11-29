@@ -44,19 +44,25 @@
   * Sample：<http://localhost:3000//api/create>
   * Remark：Create Account with user name and password.
   * Request JSON：
-             {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 'password':'xds@20234'
-             }
+
+    ```json
+      {
+          "name": 'Tony',
+          "email": '<tony@gmail.com>',
+          'password':'xds@20234'
+      }
+    ```
 
   * Response JSON：
+
+    ```json
              {
                 _id: 940807897987908
                  "name": 'Tony',
                  "email": '<tony@gmail.com>',
                  "balance":0
              }
+    ```
 
 ---
 
@@ -68,19 +74,25 @@
   * Sample：<http://localhost:3000/api/login>
   * Remark：Login with user name and password.
   * Request JSON：
-             {
-                 "email": '<tony@gmail.com>',
-                 'password':'xds@20234'
-             }
+
+     ```json
+      {
+          "email": '<tony@gmail.com>',
+          'password':'xds@20234'
+      }
+    ```
 
   * Response JSON：
-             {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 "balance":0
-             }
+
+    ```json
+      {
+          "name": 'Tony',
+          "email": '<tony@gmail.com>'
+      }
+    ```
 
 ---
+
 * <span id = "profile">Get User Profile  </span>
 
   * EndPoint：/api/profile
@@ -88,19 +100,19 @@
   * Content-Type：application/json; charset=utf-8
   * Sample：<http://localhost:3000/api/profile>
   * Remark：Get User Profile.
-  * Request JSON：
-             {
-                 "email": '<tony@gmail.com>'
-             }
-
   * Response JSON：
-             {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 "balance":0
-             }
+
+    ```json
+      {
+          "name": 'Tony',
+          "email": '<tony@gmail.com>',
+          "balance":0
+      }
+
+    ```
 
 ---
+
 * <span id = "update">Update user name and balance </span>
 
   * EndPoint：/api/update
@@ -109,20 +121,26 @@
   * Sample：<http://localhost:3000/api/update>
   * Remark：Update user name and balance.
   * Request JSON：
-            {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 "balance":2000
-             }
 
-  * Response JSON：
-             {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 "balance":2000
-             }
+    ```json
+      {
+            "name": 'Tony',
+            "balance":2000
+      }
+      ```
+
+* Response JSON：
+
+    ```json
+      {
+          "name": 'Tony',
+          "email": '<tony@gmail.com>',
+          "balance":2000
+      }
+    ```
 
 ---
+
 * <span id = "balance">Get user balance   </span>
 
   * EndPoint：/api/balance
@@ -130,20 +148,19 @@
   * Content-Type：application/json; charset=utf-8
   * Sample：<http://localhost:3000/api/balance>
   * Remark：Get user balance.
-  * Request JSON：
-            {
-                 "email": '<tony@gmail.com>'
-            }
-
 
   * Response JSON：
-             {
-                 "name": 'Tony',
-                 "email": '<tony@gmail.com>',
-                 "balance":2000
-             }
+
+    ```json
+      {
+          "name": 'Tony',
+          "email": '<tony@gmail.com>',
+          "balance":2000
+      }
+    ```
 
 ---
+
 * <span id = "depoist">Deposite the amount</span>
 
   * EndPoint：/api/depoist
@@ -152,20 +169,25 @@
   * Sample：<http://localhost:3000/api/depoist>
   * Remark：Deposite the amount.
   * Request JSON：
-            {
-                 "email": '<tony@gmail.com>',
-                 "amount": "200"
-            }
 
+    ```json
+      {
+            "amount": "200"
+      }
+    ```
 
   * Response JSON：
-             {
-               "name": "she2",
-                "email": "she2",
-                "balance": 425351
-             }
+
+    ```json
+            {
+              "name": "she2",
+              "email": "she2",
+              "balance": 425351
+            }
+    ```
 
 ---
+
 * <span id = "withdraw">Withdraw account </span>
 
   * EndPoint：/api/withdraw
@@ -174,18 +196,25 @@
   * Sample：<http://localhost:3000/api/withdraw>
   * Remark：Deposite the amount.
   * Request JSON：
-            {
-                 "email": '<tony@gmail.com>',
-                 "amount": "200"
-            }
+
+    ```json
+        {
+              "amount": "200"
+        }
+    ```
+
   * Response JSON：
+
+    ```json
              {
                 "name": "she2",
                 "email": "she2",
                 "balance": 423351
              }
+    ```
 
 ---
+
 * <span id = "all">Get all user information     </span>
 
   * EndPoint：/api/all
@@ -194,14 +223,18 @@
   * Sample：<http://localhost:3000/api/all>
   * Remark：Get all user information    .
   * Response JSON：
-        [
-            {
-                "_id": "67308b367c87f349cadb877c",
-                "name": "jhn",
-                "email": "jhn",
-                "password": "jhn",
-                "balance": 0
-            }
-        ]
+
+    ```json
+      [
+          {
+              "_id": "67308b367c87f349cadb877c",
+              "name": "jhn",
+              "email": "jhn",
+              "password": "jhn",
+              "balance": 0
+          }
+      ]
+
+    ```
 
 ---

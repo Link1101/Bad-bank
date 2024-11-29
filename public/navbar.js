@@ -10,12 +10,24 @@ function NavBar(props) {
     window.refreshuser()
   }
 
+  React.useEffect(() => {
+    if (!userInfo) {
+      getProfile((data) => {
+        if (data)
+          setUserInfo(data)
+      });
+    }
+  }, []);
+
   function logout() {
     let loginType = window.localStorage['loginType']
     window.localStorage.removeItem('user')
     window.refreshuser()
     if (loginType == 2) {
-      auth_ins.logout({ logoutParams: { returnTo: 'http://localhost:3000/logout' } });
+      auth_ins.logout({ logoutParams: { returnTo: `${location.origin}/logout` } });
+    }
+    else {
+      window.location.href = '/logout'
     }
   }
 

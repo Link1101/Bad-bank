@@ -9,5 +9,14 @@ async function CallBack() {
     window.localStorage['user'] = JSON.stringify(user);
     window.localStorage['loginType'] = 2;
     window.refreshuser()
-    window.location.href = '/'
+
+    let req = new Request('/api/login', {
+        method: 'post',
+        headers: {
+            'Content-Type': 'application/json;charset=utf-8'
+        },
+        body: JSON.stringify({ "email": user.email, name: user.name, "loginType": 2 })
+    })
+
+    fetch2(req, (data) => { window.location.href = '/' })
 }

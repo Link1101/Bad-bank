@@ -32,51 +32,28 @@ function ProfileForm(props) {
 
   const [profile, setProfile] = React.useState({});
 
-  function getProfile(email) {
-    let requestInstance = new Request('/api/Profile', {
-      method: 'post',
-      headers: {
-        'Content-Type': 'application/json;charset=utf-8'
-      },
-      body: JSON.stringify({ "email": email })
-    })
-
-    return fetch(requestInstance)
-      .then(response => response.text())
-      .then(text => {
-        const data = JSON.parse(text);
-        setProfile(data)
-      })
-  }
-
   function handle() {
     let req = new Request('/api/update', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify({ "email": profile.email, "name": profile.name, balance: profile.balance })
+      body: JSON.stringify({ "name": profile.name, balance: profile.balance })
     })
 
-    fetch(req)
-      .then(response => response.text())
-      .then(text => {
-        try {
-          const data = JSON.parse(text);
-          if (data.code && data.code != 200) {
-            throw Error(data.msg)
-          }
-          props.setStatus('');
-          props.setShow(false);
-          console.log('JSON:', data);
-        } catch (err) {
-          props.setStatus(err.message || 'Update failed')
-          console.log('err:', err.text);
-        }
-      }).catch(err => {
-        props.setStatus('Update failed' + err.message)
-        console.log('err:', err.message);
-      });
+    function success(data) {
+      window.localStorage['user'] = JSON.stringify(data);
+      window.refreshuser()
+      props.setStatus(`Balance: ${data.balance}`);
+      props.setShow(true);
+    }
+
+    function error(message) {
+      props.setStatus(message || 'Update failed')
+      console.log('err:', message);
+    }
+
+    fetch2(req, success, error)
   }
 
   React.useEffect(() => {
@@ -90,7 +67,11 @@ function ProfileForm(props) {
         // Maybe No User for Auth0
         return setProfile(user)
       }
-      getProfile(user.email);
+      getProfile((data) => {
+        if (data) {
+          setProfile(data)
+        }
+      });
     }
     fetchData();
   }, []);

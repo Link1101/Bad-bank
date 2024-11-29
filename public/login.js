@@ -2,7 +2,7 @@ const auth_ins = new auth0.Auth0Client({
   domain: 'dev-3s2qwxdm0a0xsm8s.us.auth0.com',
   clientId: 'ZtRs4qlozawCdOu4Jyx2utyc1HFQRM21',
   authorizationParams: {
-    redirect_uri: 'http://localhost:3000/callback'
+    redirect_uri: `${location.origin}/callback`
   }
 });
 
@@ -43,7 +43,7 @@ function LoginForm(props) {
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify({ "email": email, password: password })
+      body: JSON.stringify({ "email": email, password: password, "loginType": 1 })
     })
     fetch(req)
       .then(response => response.text())
@@ -55,7 +55,6 @@ function LoginForm(props) {
           console.log('JSON:', data);
           window.localStorage['user'] = JSON.stringify(data);
           window.localStorage['loginType'] = 1;
-          var btn = document.querySelector('#navbar');
           window.refreshuser()
 
         } catch (err) {
@@ -87,12 +86,12 @@ function LoginForm(props) {
       onChange={e => setPassword(e.currentTarget.value)} /><br />
 
 
-      <button type="submit" className="btn btn-light" onClick={handle}>Login</button>
+    <button type="submit" className="btn btn-light" onClick={handle}>Login</button>
 
 
-      <button type="submit"
-        className="btn btn-light ml-4"
-        onClick={auth0_login}>Auth0 Login</button>
+    <button type="submit"
+      className="btn btn-light ml-4"
+      onClick={auth0_login}>Auth0 Login</button>
 
   </>)
 }

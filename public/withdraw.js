@@ -1,5 +1,5 @@
-function Withdraw(){
-  const [show, setShow]     = React.useState(true);
+function Withdraw() {
+  const [show, setShow] = React.useState(true);
   const [status, setStatus] = React.useState('');
 
   return (
@@ -8,14 +8,14 @@ function Withdraw(){
       header="Withdraw"
       status={status}
       body={show ?
-        <WithdrawForm setShow={setShow} setStatus={setStatus}/> :
-        <WithdrawMsg setShow={setShow} setStatus={setStatus}/>}
+        <WithdrawForm setShow={setShow} setStatus={setStatus} /> :
+        <WithdrawMsg setShow={setShow} setStatus={setStatus} />}
     />
   )
 }
 
-function WithdrawMsg(props){
-  return(<>
+function WithdrawMsg(props) {
+  return (<>
     <h5>Success</h5>
     <button type="submit"
       className="btn btn-light"
@@ -23,67 +23,57 @@ function WithdrawMsg(props){
         props.setShow(true);
         props.setStatus('');
       }}>
-        Withdraw again
+      Withdraw again
     </button>
   </>);
 }
 
-function WithdrawForm(props){
-  const [email, setEmail]   = React.useState('');
+function WithdrawForm(props) {
+  // const [email, setEmail]   = React.useState('');
   const [amount, setAmount] = React.useState('');
 
-  function handle(){
+  function handle() {
     let req = new Request('/api/withDraw', {
       method: 'post',
       headers: {
         'Content-Type': 'application/json;charset=utf-8'
       },
-      body: JSON.stringify({ "email": email, amount: amount })
+      body: JSON.stringify({ amount: amount })
     })
+    function success(data) {
+      props.setStatus(`Balance: ${data.balance}`);
+      props.setShow(true);
+    }
 
+    function error(message) {
+      props.setStatus(message || 'Withdraw failed')
+      console.log('err:', message);
+    }
 
-    fetch(req)
-      .then(response => response.text())
-      .then(text => {
-        try {
-          const data = JSON.parse(text);
-          if (data.code && data.code != 200) {
-            throw Error(data.msg)
-          }
-          props.setStatus(`Balance: ${data.balance}`);
-          props.setShow(true);
-          console.log('JSON:', data);
-        } catch (err) {
-          props.setStatus(err.message || 'WithDraw failed')
-          console.log('err:', err.text);
-        }
-      }).catch(err => {
-        props.setStatus('WithDraw failed' + err.message)
-        console.log('err:', err.message);
-      });
+    fetch2(req, success, error)
   }
 
 
-  return(<>
-
+  return (<>
+    {/*
     Email<br/>
     <input type="input"
       className="form-control"
       placeholder="Enter email"
       value={email}
-      onChange={e => setEmail(e.currentTarget.value)}/><br/>
+      onChange={e => setEmail(e.currentTarget.value)}/><br/> */}
 
-    Amount<br/>
+    Amount<br />
     <input type="number"
       className="form-control"
       placeholder="Enter amount"
       value={amount}
-      onChange={e => setAmount(e.currentTarget.value)}/><br/>
+      onChange={e => setAmount(e.currentTarget.value)} /><br />
 
     <button type="submit"
       className="btn btn-light"
       onClick={handle}>
-        Withdraw
+      Withdraw
     </button>
 
   </>);

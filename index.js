@@ -8,6 +8,8 @@ const cors = require('cors');
 const dal = require('./dal.js');
 const app = express();
 
+const PORT = process.env.PORT || 3000
+
 const SESSION_SECRET = 'session-secret'
 
 const corsOptions = {
@@ -40,7 +42,13 @@ app.use(session({
 // Auth0 Logout
 app.get('/logout', function (req, res) {
     console.log('callback');
-    res.redirect(`/#/`)
+    req.session.destroy((err) => {
+        if (err) {
+            console.log(err);
+        } else {
+            res.redirect(`/#/login`);
+        }
+    });
 });
 
 // Auth0 Login Redirect Callback
@@ -84,26 +92,28 @@ app.post('/api/login', function (req, res) {
     dal.find(data.email).
         then((users) => {
             // if user exists, return error message
-            if (users.length < 1) {
-                res.status(401).send('User does not exists. Please register first');
+            if (data.loginType == 1 && users.length < 1) {
+                res.status(500).send('Either the email address or the password was entered incorrectly.');
             }
             else {
-                if (users[0].password === data.password) {
-                    let res_data = { email: users[0].email, name: users[0].name, balance: users[0].balance }
-                    console.log(res_data)
-                    req.session.user = res_data;
-                    res.send(res_data);
+                // Oauth2 Login Type
+                if (data.loginType == 1 && users[0].password != data.password) {
+                    return res.status(500).send('Either the email address or the password was entered incorrectly.');
                 }
-                else {
-                    res.status(500).send('Either the email address or the password was entered incorrectly.');
-                }
+
+                console.log(data)
+                req.session.user = data;
+                res.send(data);
             }
         });
 });
 
 //Get User Profile & Balance
 app.post('/api/profile', function (req, res) {
-    dal.find(req.body.email).
+    let email = req.session?.user?.email
+    if (!email || email.length < 1)
+        return res.status(401).send('Require login');
+    dal.find(email).
         then((users) => {
             if (users.length < 1) {
                 res.status(500).send("The user doesn't existing.");
@@ -117,17 +127,20 @@ app.post('/api/profile', function (req, res) {
 
 //Update user name and balance
 app.post('/api/update', function (req, res) {
-    let req_user = req.body
-    dal.find(req_user.email).
+    let email = req.session?.user?.email
+    if (!email || email.length < 1)
+        return res.status(401).send('Require login');
+    reqData = req.body
+    dal.find(email).
         then((users) => {
             if (users.length < 1) {
                 res.status(500).send("The user doesn't existing.");
             }
-            else if (Number(req_user.balance) < 0) {
+            else if (Number(reqData.balance) < 0) {
                 res.send({ code: 500, msg: "The balance cannot be less than zero." });
             }
             else {
-                dal.update2(req_user.email, req_user.name, Number(req_user.balance)).
+                dal.update2(email, reqData.name, Number(reqData.balance)).
                     then((response) => {
                         console.log(response);
                         res.send(response);
@@ -138,7 +151,10 @@ app.post('/api/update', function (req, res) {
 
 // Get User Account balance
 app.post('/api/balance', function (req, res) {
-    dal.find(req.body.email).
+    let email = req.session?.user?.email
+    if (!email || email.length < 1)
+        return res.status(401).send('Require login');
+    dal.find(email).
         then((users) => {
             if (users.length < 1) {
                 res.send({ code: 500, msg: "The account doesn't existing." });
@@ -151,16 +167,20 @@ app.post('/api/balance', function (req, res) {
 
 // Bank account with depoist amount.
 app.post('/api/depoist', function (req, res) {
+    let email = req.session?.user?.email
+    if (!email || email.length < 1)
+        return res.status(401).send('Require login');
+
     let data = req.body;
     var amount = Number(data.amount);
 
-    dal.find(data.email).
+    dal.find(email).
         then((users) => {
             if (users.length < 1) {
-                res.send({ code: 500, msg: "The account doesn't existing." });
+                return res.send({ code: 500, msg: "The account doesn't existing." });
             }
             else {
-                dal.update(data.email, amount).
+                dal.update(email, amount).
                     then((response) => {
                         console.log(response);
                         res.send(response);
@@ -171,19 +191,22 @@ app.post('/api/depoist', function (req, res) {
 
 // Bank account with draw amount.
 app.post('/api/withDraw', function (req, res) {
+    let email = req.session?.user?.email
+    if (!email || email.length < 1)
+        return res.status(401).send('Require login');
     let data = req.body;
     var amount = Number(data.amount);
-    dal.find(data.email).
+    dal.find(email).
         then((users) => {
             if (users.length < 1) {
                 res.send({ code: 500, msg: "The account doesn't existing." });
             }
             else {
                 if (users[0].balance < amount) {
-                    res.send({ code: 500, msg: "You have insufficient balance in your account." });
+                    return res.send({ code: 500, msg: "You have insufficient balance in your account." });
                 }
                 let finalAmount = -1 * amount
-                dal.update(data.email, finalAmount).
+                dal.update(email, finalAmount).
                     then((response) => {
                         console.log(response);
                         res.send(response);
@@ -206,8 +229,6 @@ app.get('*', (req, res) => res.sendFile(path.join(__dirname, 'public', 'index.ht
 
 
 var httpServer = http.createServer(app);
-
-var PORT = 3000;
 
 httpServer.listen(PORT, function () {
     console.log('HTTP Server is running on: http://localhost:%s', PORT);
