@@ -1,8 +1,8 @@
 # API Interface
 
-## 接口列表
+## List of endpoints
 
-| 接口                       | 说明                              |
+| Endpoints                  | Note                              |
 | -------------------------- | --------------------------------- |
 | [/logout](#logout)         | Auth0 logout redirect             |
 | [/callback](#callback)     | Auth0 Login redirect callback.    |
@@ -15,7 +15,7 @@
 | [/api/withdraw](#withdraw) | Withdraw account                  |
 | [/api/all](#all)           | Get all user information          |
 
-## 接口详情
+## Details
 
 * <span id = "logout">Auth0 logout redirect</span>
   * EndPoint：/logout
