@@ -42,7 +42,7 @@ function CreateForm(props) {
       .then(response => {
         if (response.status == 200) {
           props.setShow(true);
-          props.setStatus('Create Success!');
+          props.setStatus('Account created successfully! Please login!');
         }
         else {
           props.setShow(true);

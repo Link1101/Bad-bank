@@ -40,7 +40,7 @@ function NavBar(props) {
         </button>
         <div className="collapse navbar-collapse" id="navbarNav">
           <ul className="navbar-nav" >
-            <li className="nav-item">
+            <li className={userInfo ? "d-none" : "nav-item"}>
               <a className="nav-link" href="#/CreateAccount/">Create Account</a>
             </li>
             {/* <li className="nav-item">
